@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  zitadel:
+    restart: always
+    image: ghcr.io/zitadel/zitadel:latest
+    command: start-from-init --masterkeyFromEnv --config /config/config.yaml --steps /config/steps.yaml
+    environment:
+      - ZITADEL_MASTERKEY=${ZITADEL_MASTERKEY}
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 127.0.0.1:2400:443
+    volumes:
+      - ./config/zitadel:/config:rw
+      - certs-zitadel:/certs:ro
+
+  certs:
+    image: cockroachdb/cockroach:latest-v22.1
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["/scripts/generate-certs.sh"]
+    environment:
+      - DOMAIN=${DATABASE_DOMAIN}
+    volumes:
+      - ./scripts/certs:/scripts
+      - ./config/keys:/keys
+      - certs-database:/certs-database
+      - certificates:/certs-service:ro
+      - certs-zitadel:/certs:rw
+
+  database:
+    restart: always
+    image: cockroachdb/cockroach:latest-v22.1
+    command: start-single-node --advertise-addr database --certs-dir /cockroach/certs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    ports:
+      - 127.0.0.1:2401:8080
+      # - 26257:26257
+    volumes:
+      - ./scripts/database:/docker-entrypoint-initdb.d
+      - certs-database:/cockroach/certs:rw
+      - ./data/cockroach:/cockroach/cockroach-data:rw
+
+volumes:
+  certs-database:
+  certs-zitadel:
+  certificates:
+    external: true

@@ -1,0 +1,34 @@
+Log:
+  Level: debug
+
+Port: 443
+ExternalPort: 443
+ExternalDomain: '${DOMAIN}'
+ExternalSecure: true
+
+TLS:
+  Enabled: true
+  KeyPath: '/certs/service/privkey.pem'
+  CertPath: '/certs/service/fullchain.pem'
+
+Database:
+  cockroach:
+    Host: database
+    Database: zitadel
+    User:
+      Username: zitadel
+      Password: '${DATABASE_PASSWORD}'
+      SSL:
+        Mode: 'verify-full'
+        RootCert: '/certs/database/ca.crt'
+        Cert: '/certs/database/client.zitadel.crt'
+        Key: '/certs/database/client.zitadel.key'
+    Admin:
+      Username: root
+      # Password: ''
+      SSL:
+        Mode: 'verify-full'
+        RootCert: '/certs/database/ca.crt'
+        Cert: '/certs/database/client.root.crt'
+        Key: '/certs/database/client.root.key'
+
