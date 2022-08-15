@@ -25,7 +25,7 @@ fi
 	
 if [ -z $DATABASE_PASSWORD ]; then
 	# Create 32 character key
-	DATABASE_PASSWORD="$(openssl rand -base64 24)"
+	DATABASE_PASSWORD="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32)"
 fi
 
 if [ ! -f config/zitadel/config.yaml ]; then

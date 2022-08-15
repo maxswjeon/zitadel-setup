@@ -1,1 +1,5 @@
 .env
+config/keys/
+config/zitadel/
+scripts/database/
+data/

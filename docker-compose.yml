@@ -4,14 +4,14 @@ services:
   zitadel:
     restart: always
     image: ghcr.io/zitadel/zitadel:latest
-    command: start-from-init --masterkeyFromEnv --config /config/config.yaml --steps /config/steps.yaml
+    command: start-from-init --masterkeyFromEnv --config /config/config.yaml
     environment:
       - ZITADEL_MASTERKEY=${ZITADEL_MASTERKEY}
     depends_on:
       database:
         condition: service_healthy
     ports:
-      - 127.0.0.1:2400:443
+      - "127.0.0.1:${PORT_ZITADEL}:443"
     volumes:
       - ./config/zitadel:/config:rw
       - certs-zitadel:/certs:ro
@@ -43,8 +43,8 @@ services:
       certs:
         condition: service_completed_successfully
     ports:
-      - 127.0.0.1:2401:8080
-      # - 26257:26257
+      - "127.0.0.1:${PORT_DATABASE}:26257"
+      - "127.0.0.1:${PORT_DATABASE_CONSOLE}:8080"
     volumes:
       - ./scripts/database:/docker-entrypoint-initdb.d
       - certs-database:/cockroach/certs:rw
