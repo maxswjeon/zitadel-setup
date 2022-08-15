@@ -31,8 +31,8 @@ fi
 if [ ! -f config/zitadel/config.yaml ]; then
 	cp templates/config.yaml config/zitadel/config.yaml
 
-	sed -i "s/$${DATABASE_PASSWORD}/${DATABASE_PASSWORD}/g" config/zitadel/config.yaml
-	sed -i "s/$${DOMAIN}/${DOMAIN}/g"                       config/zitadel/config.yaml
+	sed -i "s/\${DATABASE_PASSWORD}/${DATABASE_PASSWORD}/g" config/zitadel/config.yaml
+	sed -i "s/\${DOMAIN}/${DOMAIN}/g"                       config/zitadel/config.yaml
 
 	echo "Created config/zitadel/config.yaml from templates/config.yaml"
 else
@@ -52,7 +52,7 @@ fi
 if [ ! -f scripts/database/00-init-zitadel.sql ]; then
 	cp templates/00-init-zitadel.sql scripts/database/00-init-zitadel.sql
 
-	sed -i "s/$${DATABASE_PASSWORD}/${DATABASE_PASSWORD}/g" scripts/database/00-init-zitadel.sql
+	sed -i "s/\${DATABASE_PASSWORD}/${DATABASE_PASSWORD}/g" scripts/database/00-init-zitadel.sql
 	
 	echo "Created scripts/database/00-init-zitadel.sql from templates/00-init-zitadel.sql"
 else
