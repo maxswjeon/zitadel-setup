@@ -12,7 +12,7 @@ fi
 
 echo "===== Finding Service Certificate ====="
 CERT_DOMAIN="${DOMAIN}"
-while [ -n "${CERT_DOMAIN}" ]; do
+while echo "${CERT_DOMAIN}" | grep "\."; do
 	if [ ! -d "/certs-service/live/${CERT_DOMAIN}" ] && [ ! -d "/certs-service/live/${CERT_DOMAIN}_ecc" ]; then
 		echo "Failed to find Service Certificate for \"${CERT_DOMAIN}\""
 		CERT_DOMAIN="${CERT_DOMAIN#*.}"
